@@ -15,6 +15,7 @@ from webob.multidict import UnicodeMultiDict
 from paste.util.multidict import MultiDict
 
 from ckan.controllers.api import ApiController
+from ckanext.datastore.controller import DatastoreController
 
 log = logging.getLogger('ckanext.googleanalytics')
 
@@ -115,3 +116,26 @@ class GAApiController(ApiController):
         self._post_analytics(c.user, register, "search", id)
 
         return ApiController.search(self, ver, register)
+
+class GADatastoreController(DatastoreController):
+    def _post_analytics(
+            self, user, request_obj_type, request_function, request_id):
+        if config.get('googleanalytics.id'):
+            data_dict = {
+                "v": 1,
+                "tid": config.get('googleanalytics.id'),
+                "cid": hashlib.md5(user).hexdigest(),
+                # customer id should be obfuscated
+                "t": "event",
+                "dh": c.environ['HTTP_HOST'],
+                "dp": c.environ['PATH_INFO'],
+                "dr": c.environ.get('HTTP_REFERER', ''),
+                "ec": "CKAN Resource Download Request",
+                "ea": request_obj_type+request_function,
+                "el": request_id,
+            }
+            plugin.GoogleAnalyticsPlugin.analytics_queue.put(data_dict)
+
+    def dump(self, resource_id):
+        self._post_analytics(c.user, "Resource", "Download", resource_id)
+        return DatastoreController.dump(self, resource_id)

@@ -55,7 +55,7 @@ Installation
 
     ::
 
-    $ pip install -e  git+https://github.com/ckan/ckanext-googleanalytics.git#egg=ckanext-googleanalytics
+    $ pip install -e  git+https://github.com/OpenGov-OpenData/ckanext-googleanalytics.git#egg=ckanext-googleanalytics
     $ pip install -r ckanext-googleanalytics/requirements.txt
 
 2. Edit your development.ini (or similar) to provide these necessary parameters:
