@@ -1,9 +1,11 @@
 import os
 import httplib2
+import argparse
 from apiclient.discovery import build
+from oauth2client import tools
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
-from oauth2client.tools import run
+from oauth2client.tools import run_flow
 
 from pylons import config
 
@@ -20,7 +22,8 @@ def _prepare_credentials(token_filename, credentials_filename):
         flow = flow_from_clientsecrets(credentials_filename,
                 scope='https://www.googleapis.com/auth/analytics.readonly',
                 message="Can't find the credentials file")
-        credentials = run(flow, storage)
+        flags = tools.argparser.parse_args(args=[])
+        credentials = run_flow(flow, storage, flags)
 
     return credentials
 
