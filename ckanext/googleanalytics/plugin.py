@@ -106,6 +106,7 @@ class GoogleAnalyticsPlugin(p.SingletonPlugin):
             msg = "Missing googleanalytics.id in config"
             raise GoogleAnalyticsException(msg)
         self.googleanalytics_id = config['googleanalytics.id']
+        self.googleanalytics_id2 = config.get('googleanalytics.id2')
         self.googleanalytics_domain = config.get(
                 'googleanalytics.domain', 'auto')
         self.googleanalytics_fields = ast.literal_eval(config.get(
@@ -251,6 +252,7 @@ class GoogleAnalyticsPlugin(p.SingletonPlugin):
         '''
         data = {
             'googleanalytics_id': self.googleanalytics_id,
+            'googleanalytics_id2': self.googleanalytics_id2,
             'googleanalytics_domain': self.googleanalytics_domain,
             'googleanalytics_fields': str(self.googleanalytics_fields),
             'googleanalytics_linked_domains': self.googleanalytics_linked_domains

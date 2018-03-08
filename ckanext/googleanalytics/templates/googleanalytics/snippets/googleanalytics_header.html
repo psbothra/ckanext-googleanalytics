@@ -5,10 +5,16 @@
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
   ga('create', '{{googleanalytics_id}}', '{{googleanalytics_domain}}', {{googleanalytics_fields|safe}});
+  {% if googleanalytics_id2 %}
+  ga('create', '{{googleanalytics_id2}}', '{{googleanalytics_domain}}', 'secondary');
+  {% endif %}
   {% if googleanalytics_linked_domains %}
   ga('require', 'linker');
   ga('linker:autoLink', [{% for domain in googleanalytics_linked_domains %}'{{domain}}'{% if not loop.last %},{% endif %}{% endfor %}] );
   {% endif %}   
   ga('set', 'anonymizeIp', true);
   ga('send', 'pageview');
+  {% if googleanalytics_id2 %}
+  ga('secondary.send', 'pageview');
+  {% endif %}
 </script>
