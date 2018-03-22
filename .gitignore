@@ -8,3 +8,4 @@ build/
 dist/
 credentials.json
 token.dat
+.DS_Store
