@@ -64,7 +64,7 @@ def post_analytics_decorator(func):
             "CKAN Resource Download Request",
             "Package",
             "Download",
-            package_id+'('+package_name+')'
+            package_name
         )
         _post_analytics(
             c.user,
