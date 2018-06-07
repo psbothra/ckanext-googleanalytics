@@ -8,6 +8,7 @@ import pylons
 from ckan.lib.base import c
 import ckan.lib.helpers as h
 import ckan.plugins as p
+import ckan.plugins.toolkit as toolkit
 import gasnippet
 from routes.mapper import SubMapper, Mapper as _Mapper
 from pylons import config
@@ -44,14 +45,33 @@ def _post_analytics(
 
 
 def post_analytics_decorator(func):
-
     def func_wrapper(cls, id, resource_id, filename):
+        resource = toolkit.get_action('resource_show')({},{'id':resource_id})
+        resource_alias = resource.get('name')
+        package_id = resource.get('package_id')
+        package = toolkit.get_action('package_show')({},{'id':package_id})
+        organization_title = package.get('organization').get('title')
+        package_name = package.get('name')
         _post_analytics(
             c.user,
             "CKAN Resource Download Request",
             "Resource",
             "Download",
-            resource_id
+            resource_id+'('+resource_alias+')',
+        )
+        _post_analytics(
+            c.user,
+            "CKAN Resource Download Request",
+            "Package",
+            "Download",
+            package_name
+        )
+        _post_analytics(
+            c.user,
+            "CKAN Resource Download Request",
+            "Organization",
+            "Download",
+            organization_title
         )
 
         return func(cls, id, resource_id, filename)
