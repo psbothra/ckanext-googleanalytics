@@ -47,6 +47,23 @@ class GAApiController(ApiController):
             }
             plugin.GoogleAnalyticsPlugin.analytics_queue.put(data_dict)
 
+        if config.get('googleanalytics.id2'):
+            data_dict_2 = {
+                "v": 1,
+                "tid": config.get('googleanalytics.id2'),
+                "cid": hashlib.md5(user).hexdigest(),
+                # customer id should be obfuscated
+                "t": "event",
+                "dh": c.environ['HTTP_HOST'],
+                "dp": c.environ['PATH_INFO'],
+                "dr": c.environ.get('HTTP_REFERER', ''),
+                "ec": "CKAN API Request",
+                "ea": request_obj_type+request_function,
+                "el": request_id,
+            }
+            plugin.GoogleAnalyticsPlugin.analytics_queue.put(data_dict_2)
+
+
     def action(self, logic_function, ver=None):
         try:
             function = logic.get_action(logic_function)
