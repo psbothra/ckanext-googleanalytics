@@ -73,6 +73,13 @@ def post_analytics_decorator(func):
             "Download",
             organization_title
         )
+        _post_analytics(
+            c.user,
+            "CKAN Organization Page View",
+            "Organization",
+            "Download",
+            organization_title
+        )
 
         return func(cls, id, resource_id, filename)
 
@@ -208,6 +215,17 @@ class GoogleAnalyticsPlugin(p.SingletonPlugin):
             'activity'
         ]
         register_list_str = '|'.join(register_list)
+
+        with SubMapper(map, controller='ckanext.googleanalytics.controller:GAOrganizationController') as m:
+           m.connect('/organization/{id}',
+                   action='read')
+
+        with SubMapper(map, controller='ckanext.googleanalytics.controller:GAPackageController') as m:
+           m.connect('dataset_read', '/dataset/{id}', action='read',
+                     ckan_icon='sitemap')
+           m.connect('/dataset/{id}/resource/{resource_id}',
+                     action='resource_read')
+                     
         # /api ver 3 or none
         with SubMapper(map, controller='ckanext.googleanalytics.controller:GAApiController', path_prefix='/api{ver:/3|}',
                     ver='/3') as m:
@@ -298,3 +316,12 @@ class GoogleAnalyticsPlugin(p.SingletonPlugin):
                 # If no custom uploader applied, use the default one
                 PackageController.resource_download = post_analytics_decorator(
                     PackageController.resource_download)
+
+    # def modify_organization_show_route(self, map):
+    #     if '_routenames' in map.__dict__:
+    #         if 'organization_read' in map.__dict__['_routenames']:
+    #             route_data = map.__dict__['_routenames']['organization_read'].__dict__
+    #             route_controller = route_data['defaults']['controller'].split(
+    #                 ':')
+    #             # module = importlib.import_module("GroupController")
+    #             # print module
